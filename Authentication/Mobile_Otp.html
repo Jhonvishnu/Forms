@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Form Example</title>
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-title {
+            margin-bottom: 1.5rem;
+            color: #007bff;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+        .form-text {
+            font-size: 0.875rem;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+       #reSenOTP{
+        display: none;
+       }
+
+
+    </style>
+</head>
+<body>
+    <div class="form-container mt-5">
+        <h2 class="form-title text-center">OTP Verification </h2>
+        <form id="myForm">
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone Number:</label>
+                <div class="input-group">
+                    <span class="input-group-text">+91</span>
+                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="1234567890" maxlength="10" pattern="\d{10}" oninput="phoneNumber()" required>
+                </div>
+                <div id="error-message" class="form-text text-danger"></div>
+            </div>
+
+            <button id="genOTP" type="button" class="btn btn-custom w-100 mb-2" onclick="generateOTP()">Get OTP</button>
+            <button id="reSenOTP" type="button" class="btn btn-secondary w-100" onclick="resendOTP()">Resend OTP</button>
+            <div id="otp-message" class="form-text text-success mt-3"></div>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let otp = '';
+
+        function phoneNumber() {
+            const phoneInput = document.getElementById('phone');
+            const errorMessage = document.getElementById('error-message');
+            const phoneNumber = phoneInput.value;
+
+            // Check if the input is a number and exactly 10 digits
+            const phonePattern = /^\d{10}$/;
+
+            if (phonePattern.test(phoneNumber)) {
+                // Clear error message if valid
+                errorMessage.textContent = '';
+            } else {
+                // Show error message if invalid
+                errorMessage.textContent = 'Please enter a valid 10-digit phone number.';
+            }
+        }
+
+        function generateOTP() {
+            const phoneInput = document.getElementById('phone');
+            const otpMessage = document.getElementById('otp-message');
+            let getOTP = document.getElementById('genOTP')
+            let reSendOTP = document.getElementById('reSenOTP')
+            const phoneNumber = phoneInput.value;
+
+            // Check if the phone number is valid
+            if (!/^\d{10}$/.test(phoneNumber)) {
+                otpMessage.textContent = '';
+                return;
+            }
+
+            // Generate a random 6-digit OTP
+            otp = Math.floor(100000 + Math.random() * 900000);
+
+            // Display the OTP
+            otpMessage.textContent = `Your OTP is: ${otp}`;
+            getOTP.style.display="none";
+            reSendOTP.style.display="block";
+        }
+
+        function resendOTP() {
+            // Simply call generateOTP to resend a new OTP
+            generateOTP();
+        }
+    </script>
+</body>
+</html>
