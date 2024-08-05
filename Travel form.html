@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Wizard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,700" rel="stylesheet">
+    <style>
+         body {
+            background: white;
+            font: 14px/1.5 'Roboto Slab', serif;
+        }
+
+        .tracker {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .step {
+            position: relative;
+            text-align: center;
+            padding: 20px;
+            background-color: #ddd;
+            border-radius: 4px;
+            color: #666;
+            transition: background-color 0.3s;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .step.active {
+            background-color: #4caf50;
+            color: white;
+        }
+        .step::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #ddd;
+            z-index: -1;
+        }
+        .step.active::before {
+            background-color: #4caf50;
+        }
+        .step:first-child::before {
+            width: 0;
+        }
+
+        .form-set {
+            margin-top: 55px;
+        }
+
+        .form-set input {
+            border: none;
+            border-bottom: 2px solid;
+            background-color: transparent;
+            width: 100%;
+            margin-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .img-set {
+            margin-top: 15px;
+            font-size: 20px;
+        }
+
+        .box {
+            width: 200px;
+            height: 200px;
+            background-color: #ccc6c6;
+            border: 2px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            max-width: 615px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+           
+        }
+
+        .label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 700;
+            color: #ec6464;
+            font-style: italic;
+            font-size: 20px;
+        }
+
+        .amount-input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 100px;
+            box-sizing: border-box;
+        }
+
+        .amount-input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .amount-label {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            color: white;
+        } 
+        .w-55{
+            width: 55% !important;
+        }
+        .tracker.mx-30 {
+        margin-left: 30% !important;
+        margin-right: 30% !important;
+        }
+        .form-step {
+            display: none;
+        }
+        .form-step:first-of-type {
+            display: block;
+        }
+        
+        .progress {
+    height: 20px;
+    background-color: #f3f3f3;
+    width: 35%;
+    position: relative;
+    left: 32%;
+    top: -60px;
+}
+
+.progress-bar {
+    font-size: 0.9rem;
+    line-height: 20px;
+    color: white;
+    text-align: center;
+}
+
+
+
+
+/*  IMG Upload*/
+
+ /* File input container */
+ .file-upload-container {
+            position: relative;
+            width: 65%;
+            height: 165px;
+            border: 2px double #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            margin: 10px;
+        }
+
+        /* Hide the default file input */
+        .file-upload-container input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+       /* Upload img text */
+        span.Uplimg {
+            position: absolute;
+            bottom: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: none;
+        }
+
+        /* Plus icon styling */
+        .plus-icon {
+            font-size: 30px;
+            color: #4caf50;
+            background-color: #f9f9f9;
+            border-radius: 50%;
+            padding: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+        }
+
+        /* Image preview styling */
+        .preview-image {
+            width: 140px;
+            height: 165px;
+            object-fit: fill;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .remove-btn:hover {
+            background-color: darkred;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 80%;
+            max-height: 80%;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            color: #fff;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+
+
+    </style> 
+</head>
+
+<body>
+    <div class="container-fluid main-container">
+
+       <!-- Form Tracker -->
+       <div class="tracker mx-30">
+        <div class="step active">1</div>
+        <div class="step">2</div>
+       </div>
+            <!-- Progress Bar -->
+    <div class="progress mb-4">
+        <div id="progress-bar" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+
+        <div class="card w-55 m-auto form-step">
+        <form id="form1" class="form-set px-5">
+            <div class="form-group">
+                <label for="car_name">Car Name</label>
+                <input type="text" name="car_name" class="form-control" id="car_name" placeholder="Car Name" required="true">
+            </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <label for="car_number">Car Number</label>
+                    <input type="text" name="car_number" class="form-control" id="car_number" placeholder="Car Number" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="car_seats">Car Seats</label>
+                    <input type="text" name="car_seats" class="form-control" id="car_seats" placeholder="Car Seats" required>
+                </div>
+            </div>
+            <div class="form-row img-set">
+                <div class="col-md-4">
+                    <label for="front_image">Front</label>
+                    <div class="file-upload-container">
+                        <input type="file" class="file-input" multiple required>
+                        <span class="Uplimg">Upload Image</span>
+                        <div class="plus-icon">+</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label for="back_image">Back</label>
+                    <div class="file-upload-container">
+                        <input type="file" class="file-input" multiple required>
+                        <span class="Uplimg">Upload Image</span>
+                        <div class="plus-icon">+</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label for="inside_image">Inside</label>
+                    <div class="file-upload-container">
+                        <input type="file" class="file-input" multiple required>
+                        <span class="Uplimg">Upload Image</span>
+                        <div class="plus-icon">+</div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
+            </div>
+        </form>
+    </div>
+
+        <!-- Modal for viewing images -->
+    <div id="myModal" class="modal">
+        <span class="close" id="modal-close">&times;</span>
+        <img class="modal-content" id="modal-img">
+    </div>
+    <div class="card w-55 m-auto form-step">
+        <form id="form2">
+            <div class="container">
+                <div class="form-group">
+                    <label for="fromDateTime" class="label">From:</label>
+                    <input type="datetime-local" id="fromDateTime" name="fromDateTime" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="toDateTime" class="label">To:</label>
+                    <input type="datetime-local" id="toDateTime" name="toDateTime" class="form-control" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <label for="km" class="label">KM:</label>
+                        <input type="text" id="km" name="km" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="perKmRate" class="label">Per KM Rate:</label>
+                        <input type="text" id="perKmRate" name="perKmRate" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount" class="amount-label">Amount:</label>
+                    <input type="number" id="amount" name="amount" class="amount-input" placeholder="₹">
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep()">Previous</button>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    </div>
+
+    <script>
+
+let currentStep = 0;
+
+function showStep(stepIndex) {
+    const steps = document.querySelectorAll('.form-step');
+    const stepElements = document.querySelectorAll('.step');
+    const progressBar = document.getElementById('progress-bar');
+    
+    steps.forEach((step, index) => {
+        step.style.display = index === stepIndex ? 'block' : 'none';
+    });
+
+    stepElements.forEach((stepElement, index) => {
+        stepElement.classList.toggle('active', index === stepIndex);
+    });
+
+    // Update the progress bar
+    const percentage = (stepIndex / (steps.length - 1)) * 100;
+    progressBar.style.width = percentage + '%';
+    progressBar.setAttribute('aria-valuenow', percentage);
+}
+
+function nextStep() {
+    const form1 = document.getElementById('form1');
+    if (currentStep === 0 && form1.checkValidity()) {
+        currentStep = 1;
+        showStep(currentStep);
+    } else if (currentStep === 0) {
+        // Validate Form 2 if needed before submission
+        if (document.getElementById('form1').checkValidity()) {
+            alert('Form 2 is valid and can be submitted.');
+        } else {
+            alert('Please fill out all required fields in Form 2.');
+        }
+    }
+}
+
+function prevStep() {
+    if (currentStep === 1) {
+        currentStep = 0;
+        showStep(currentStep);
+    }
+}
+
+// Initialize the form display
+showStep(currentStep);
+
+// Existing image handling functions here
+
+
+// Function to create image element with a remove button
+function createImageElement(src, alt) {
+    const imgWrapper = document.createElement('div');
+    imgWrapper.style.position = 'relative';
+    imgWrapper.style.top = '-20px';
+
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = alt;
+    img.className = 'preview-image'; // Use the class for styling
+    img.addEventListener('click', function () {
+        openModal(src); // Open modal with the image
+    });
+
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = 'X';
+    removeBtn.className = 'remove-btn';
+    removeBtn.addEventListener('click', function () {
+        imgWrapper.remove(); // Remove the entire imgWrapper including the image
+    });
+
+    imgWrapper.appendChild(img);
+    imgWrapper.appendChild(removeBtn);
+    return imgWrapper;
+}
+
+function openModal(src) {
+    const modal = document.getElementById('myModal');
+    const modalImg = document.getElementById('modal-img');
+    modal.style.display = 'flex'; // Show the modal
+    modalImg.src = src; // Set the image source for the modal
+}
+
+function closeModal() {
+    const modal = document.getElementById('myModal');
+    modal.style.display = 'none'; // Hide the modal
+}
+
+// Handle file input change events for all file inputs
+document.querySelectorAll('.file-input').forEach(fileInput => {
+    fileInput.addEventListener('change', function (event) {
+        const files = event.target.files;
+        const uploadContainer = event.target.closest('.file-upload-container');
+
+        // Clear previous images
+        const existingPreviews = uploadContainer.querySelectorAll('.preview-image');
+        existingPreviews.forEach(img => img.parentNode.remove()); // Remove existing previews
+
+        // Check if files were selected
+        if (files.length === 0) {
+            return; // No files selected
+        }
+
+        // Read and display selected images
+        Array.from(files).forEach(file => {
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imgElement = createImageElement(e.target.result, file.name);
+                    uploadContainer.appendChild(imgElement);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+});
+
+// Handle click events on plus icons
+document.querySelectorAll('.plus-icon').forEach((plusIcon, index) => {
+    plusIcon.addEventListener('click', function() {
+        document.querySelectorAll('.file-input')[index].click(); // Trigger click on the associated file input
+    });
+});
+
+// Event listener for closing the modal
+document.getElementById('modal-close').addEventListener('click', closeModal);
+
+// Close the modal if clicked outside of the image
+window.addEventListener('click', function (event) {
+    const modal = document.getElementById('myModal');
+    if (event.target === modal) {
+        closeModal();
+    }
+});
+
+
+    </script>
+    
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
+
